@@ -115,7 +115,3 @@ def insertion_sort(iterable, begin=None, end=None):
                 swap(iterable, j, j-1)
                 j -= 1
     return iterable
-
-if __name__ == '__main__':
-    print merge_sort([])
-    #print merge_in_place([1,2,3,4,5, 4,6,7,8,19], begin=3)
