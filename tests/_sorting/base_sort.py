@@ -1,5 +1,6 @@
 import json
 from tests.resources import get_res
+import random
 
 
 class BaseSortTestMixin(object):
@@ -37,6 +38,20 @@ class BaseSortTestMixin(object):
         """
         return list(cls._big_iter_json)
 
+    def _test_in_place(self, tc, iterable, res, print_res=True):
+        """
+
+        :param tc: (unittest.TestCase)
+        :param iterable: (iterable) original iterable
+        :param res: (iterable) result from sorting
+        :return:
+        """
+        if print_res:
+            tc.assertIs(iterable, res,
+                        "%s is not In-place: %s" % (self.alg_name, res))
+        else:
+            tc.assertIs(iterable, res, "%s is not In-place: %s" % self.alg_name)
+
 
 class SortTestMixin(BaseSortTestMixin):
     """Provides _sorting tests features. """
@@ -63,17 +78,45 @@ class SortTestMixin(BaseSortTestMixin):
         tc.assertEqual(l1, [5], '%s [x] does not return [x]' % self.alg_name)
         self._test_in_place(tc, l1, res, True)
 
-    def _test_small(self, tc):
+    def _test_pair(self, tc):
+        """
+
+        :param tc:
+        :return:
+        """
+        l1 = [2, 1]
+        l1_copy = l1[:]
+        res = self.sort_func(l1)
+        expect = sorted(l1)
+        tc.assertEqual(res, expect, '%s pair %s does not return expected: %s' %
+                       (self.alg_name, l1_copy, expect))
+        self._test_in_place(tc, l1, res, True)
+
+    def _test_small(self, tc, small_list=None):
         """
 
         :param tc: (unittest.TestCase)
         :return:
         """
-        small_list = self._small_list()
+        if not small_list:
+            small_list = self._small_list()
+        small_list_copy = small_list[:]
         res = self.sort_func(small_list)
-        tc.assertEqual(res, type(self)._small_sorted,
-                       '%s does not return sorted list: %s' % (self.alg_name, res))
+        expect = sorted(small_list)
+        tc.assertEqual(res, expect, '%s on %s does not return sorted list: %s' %
+                       (self.alg_name, small_list_copy, res))
         self._test_in_place(tc, small_list, res, True)
+
+    def _test_random_small(self, tc, n=100):
+        """
+
+        :param tc:
+        :return:
+        """
+        choices = range(100)
+        for i in range(n):
+            seq = [random.choice(choices) for i in range(10)]
+            self._test_small(tc, small_list=seq)
 
     def _test_big(self, tc):
         """
@@ -86,20 +129,6 @@ class SortTestMixin(BaseSortTestMixin):
         tc.assertEqual(res, type(self)._big_sorted,
                        '%s does not return sorted list' % self.alg_name)
         self._test_in_place(tc, big_list, res)
-
-    def _test_in_place(self, tc, iterable, res, print_res=True):
-        """
-
-        :param tc: (unittest.TestCase)
-        :param iterable: (iterable) original iterable
-        :param res: (iterable) result from sorting
-        :return:
-        """
-        if print_res:
-            tc.assertIs(iterable, res,
-                        "%s does not sort in-place: %s" % (self.alg_name, res))
-        else:
-            tc.assertIs(iterable, res, "%s does not sort in-place: %s" % self.alg_name)
 
 
 class SubSortTestMixin(SortTestMixin):
@@ -135,11 +164,12 @@ class SubSortTestMixin(SortTestMixin):
         """
         k = 4
         small_list = self._small_list()
+        small_list_copy = small_list[:]
         res = self.sort_func(small_list, end=k)
-        expect = sorted(small_list[:k]) + small_list[k:]
+        expect = sorted(small_list_copy[:k]) + small_list_copy[k:]
         tc.assertEqual(res, expect,
                        '%s beginning slice %s does not return expected result: %s' %
-                       (self.alg_name, small_list[:k], expect))
+                       (self.alg_name, small_list_copy[:k], expect))
         self._test_in_place(tc, small_list, res, print_res=True)
 
     def _test_middle_slice(self, tc):
@@ -151,11 +181,12 @@ class SubSortTestMixin(SortTestMixin):
         i = 3
         k = 7
         small_list = self._small_list()
+        small_list_copy = small_list[:]
         res = self.sort_func(small_list, begin=i, end=k)
-        expect = small_list[:i] + sorted(small_list[i:k]) + small_list[k:]
+        expect = small_list_copy[:i] + sorted(small_list_copy[i:k]) + small_list_copy[k:]
         tc.assertEqual(res, expect,
                        '%s middle slice %s does not return expected result: %s' %
-                       (self.alg_name, small_list[i:k], expect))
+                       (self.alg_name, small_list_copy[i:k], expect))
         self._test_in_place(tc, small_list, res, True)
 
     def _test_end_slice(self, tc):
@@ -166,9 +197,10 @@ class SubSortTestMixin(SortTestMixin):
         """
         i = 4
         small_list = self._small_list()
+        small_list_copy = small_list[:]
         res = self.sort_func(small_list, begin=i)
-        expect = small_list[:i] + sorted(small_list[i:])
+        expect = small_list_copy[:i] + sorted(small_list_copy[i:])
         tc.assertEqual(res, expect,
                        '%s end slice %s does not return expected result: %s' %
-                       (self.alg_name, small_list[i:], expect))
+                       (self.alg_name, small_list_copy[i:], expect))
         self._test_in_place(tc, small_list, res, True)
