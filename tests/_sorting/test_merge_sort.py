@@ -1,12 +1,12 @@
 import unittest
 from base_sort import SortTestMixin
-import sorting
+import sort
 
 
 class TestMergeSort(unittest.TestCase):
     """Test sorting method. """
 
-    sort_test = SortTestMixin('merge sort', sorting.merge_sort)
+    sort_test = SortTestMixin('merge sort', sort.merge_sort)
 
     def test_empty(self):
         type(self).sort_test._test_empty(self)

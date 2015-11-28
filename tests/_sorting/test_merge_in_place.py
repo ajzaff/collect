@@ -1,13 +1,13 @@
 from base_sort import SubSortTestMixin
 import unittest
-import sorting
+import sort
 import random
 
 
 class TestMergeInPlace(unittest.TestCase):
     """Test merge of sub-lists n-place. """
 
-    sort_test = SubSortTestMixin('merge', sorting.merge_in_place)
+    sort_test = SubSortTestMixin('merge', sort.merge_in_place)
 
     def test_merge_empty(self):
         type(self).sort_test._test_empty(self)

@@ -1,5 +1,5 @@
 import unittest
-import sorting
+import sort
 
 
 class TestSwap(unittest.TestCase):
@@ -11,7 +11,7 @@ class TestSwap(unittest.TestCase):
         :return:
         """
         with self.assertRaises(IndexError):
-            sorting.swap([], 0, 1)
+            sort.swap([], 0, 1)
 
     def test_swap_same_index(self):
         """Swap same index gracefully.
@@ -19,7 +19,7 @@ class TestSwap(unittest.TestCase):
         :return:
         """
         l1 = [5]
-        l2 = sorting.swap(l1, 0, 0)
+        l2 = sort.swap(l1, 0, 0)
         self.assertEqual(l1, l2, "swap [x], 0, 0 does not equal [x]")
 
     def test_swap_legal(self):
@@ -28,7 +28,7 @@ class TestSwap(unittest.TestCase):
         :return:
         """
         l1 = [1, 2]
-        l2 = sorting.swap(l1, 0, 1)
+        l2 = sort.swap(l1, 0, 1)
         self.assertEqual(l1, [2, 1],
                          "swap [x, y], 0, 1 does not equal [y, x]")
 
@@ -39,5 +39,5 @@ class TestSwap(unittest.TestCase):
         """
         l1 = [1, 2]
         with self.assertRaises(IndexError):
-            sorting.swap(l1, 0, 2)
+            sort.swap(l1, 0, 2)
 

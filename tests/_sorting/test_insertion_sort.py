@@ -1,12 +1,12 @@
 from base_sort import SubSortTestMixin
 import unittest
-import sorting
+import sort
 
 
 class TestInsertionSort(unittest.TestCase):
     """Test sorting method. """
 
-    sort_test = SubSortTestMixin('insertion sort', sorting.insertion_sort)
+    sort_test = SubSortTestMixin('insertion sort', sort.insertion_sort)
 
     def test_empty(self):
         type(self).sort_test._test_empty(self)

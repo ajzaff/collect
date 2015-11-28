@@ -1,12 +1,12 @@
 import unittest
 from base_sort import SortTestMixin
-import sorting
+import sort
 
 
 class TestBubbleSort(unittest.TestCase):
     """Test sorting method. """
 
-    sort_test = SortTestMixin('bubble sort', sorting.bubble_sort)
+    sort_test = SortTestMixin('bubble sort', sort.bubble_sort)
 
     def test_empty(self):
         type(self).sort_test._test_empty(self)
