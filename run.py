@@ -86,7 +86,7 @@ def single_buy_single_sell_optimal_divide(iterable, begin=None, end=None):
         # ........... buy  | sell | min  | max  | profit
         b, s, mi, ma, p = _begin, _begin, _begin, _begin, 0
         if n > 1:
-            middle = _begin + (_end - _begin) // 2
+            middle = _begin + n // 2
             left = rec(_begin, middle)
             right = rec(middle, _end)
             new_min = left[2] if iterable[left[2]] <= iterable[right[2]] else right[2]
