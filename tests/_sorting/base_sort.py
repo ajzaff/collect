@@ -31,6 +31,17 @@ class BaseSortTestMixin(object):
         return list(cls._small_iter)
 
     @classmethod
+    def _random_small_list(cls, n=None, k=None):
+        """Returns a new small list for use in _sorting.
+        :return: (list)
+        """
+        if n is None:
+            n = 10
+        if k is None:
+            k = n
+        return [random.randrange(k) for i in range(n)]
+
+    @classmethod
     def _big_list(cls):
         """Returns a new big list for use in _sorting.
 
@@ -75,7 +86,7 @@ class SortTestMixin(BaseSortTestMixin):
         """
         l1 = [5]
         res = self.sort_func(l1)
-        tc.assertEqual(l1, [5], '%s [x] does not return [x]' % self.alg_name)
+        tc.assertEqual(l1, l1, '%s [x] does not return [x]' % self.alg_name)
         self._test_in_place(tc, l1, res, True)
 
     def _test_pair(self, tc):
@@ -85,12 +96,16 @@ class SortTestMixin(BaseSortTestMixin):
         :return:
         """
         l1 = [2, 1]
-        l1_copy = l1[:]
-        res = self.sort_func(l1)
-        expect = sorted(l1)
+        l2 = [1, 2]
+        l1_copy, l2_copy = l1[:], l2[:]
+        res, res2 = self.sort_func(l1), self.sort_func(l2)
+        expect, expect2 = sorted(l1), sorted(l2)
         tc.assertEqual(res, expect, '%s pair %s does not return expected: %s' %
                        (self.alg_name, l1_copy, expect))
-        self._test_in_place(tc, l1, res, True)
+        tc.assertEqual(res2, expect2, '%s pair %s does not return expected: %s' %
+                       (self.alg_name, l2_copy, expect))
+        self._test_in_place(tc, l1, res, print_res=True)
+        self._test_in_place(tc, l2, res2, print_res=True)
 
     def _test_small(self, tc, small_list=None):
         """
@@ -156,40 +171,78 @@ class SubSortTestMixin(SortTestMixin):
         tc.assertEqual(res, l1, '%s singleton slice does not return original list' % self.alg_name)
         self._test_in_place(tc, l1, res, print_res=True)
 
-    def _test_begin_slice(self, tc):
+    def _test_begin_slice(self, tc, k=None):
         """
 
         :param tc: (unittest.TestCase)
         :return:
         """
-        k = 4
-        small_list = self._small_list()
+        small_list = self._random_small_list()
         small_list_copy = small_list[:]
+        if k is None:
+            k = random.randrange(len(small_list))
         res = self.sort_func(small_list, end=k)
         expect = sorted(small_list_copy[:k]) + small_list_copy[k:]
         tc.assertEqual(res, expect,
-                       '%s beginning slice %s does not return expected result: %s' %
-                       (self.alg_name, small_list_copy[:k], expect))
+                       '%s beginning slice %s[:%d] does not return expected result: %s' %
+                       (self.alg_name, small_list_copy, k, expect))
         self._test_in_place(tc, small_list, res, print_res=True)
 
-    def _test_middle_slice(self, tc):
+    def _test_random_begin_slice(self, tc, k=None):
         """
 
         :param tc: (unittest.TestCase)
         :return:
         """
-        i = 3
-        k = 7
-        small_list = self._small_list()
+        for i in range(100):
+            self._test_begin_slice(tc)
+
+    def _test_middle_slice(self, tc, i=None, k=None):
+        """
+
+        :param tc: (unittest.TestCase)
+        :return:
+        """
+        small_list = self._random_small_list()
         small_list_copy = small_list[:]
+        if i is None:
+            i = random.randrange(len(small_list))
+        if k is None:
+            k = i + random.randrange(len(small_list)-i)
         res = self.sort_func(small_list, begin=i, end=k)
         expect = small_list_copy[:i] + sorted(small_list_copy[i:k]) + small_list_copy[k:]
         tc.assertEqual(res, expect,
-                       '%s middle slice %s does not return expected result: %s' %
-                       (self.alg_name, small_list_copy[i:k], expect))
+                       '%s middle slice %s[%d:%d] does not return expected result: %s' %
+                       (self.alg_name, small_list_copy, i, k, expect))
         self._test_in_place(tc, small_list, res, True)
 
-    def _test_end_slice(self, tc):
+    def _test_random_middle_slice(self, tc):
+        """
+
+        :param tc: (unittest.TestCase)
+        :return:
+        """
+        for i in range(100):
+            self._test_middle_slice(tc)
+
+    def _test_end_slice(self, tc, i=None):
+        """
+
+        :param tc: (unittest.TestCase)
+        :return:
+        """
+        small_list = self._random_small_list()
+        small_list_copy = small_list[:]
+        if i is None:
+            i = random.randrange(len(small_list))
+        res = self.sort_func(small_list, begin=i)
+        expect = small_list_copy[:i] + sorted(small_list_copy[i:])
+        tc.assertEqual(res, expect,
+                       '%s end slice %s does not return expected result: %s' %
+                       (self.alg_name, small_list_copy[i:], expect))
+        self._test_in_place(tc, small_list, res, True)
+
+    def _test_random_end_slice(self, tc):
         """
 
         :param tc: (unittest.TestCase)
