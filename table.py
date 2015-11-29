@@ -71,7 +71,6 @@ if __name__ == '__main__':
             ht.add(e)
             items[bucket] = e
 
-
     i = 0
     while True:
         verbose_add(i)

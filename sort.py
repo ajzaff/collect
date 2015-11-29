@@ -123,43 +123,6 @@ def insertion_sort(iterable, begin=None, end=None):
     return iterable
 
 
-def quick_sort(iterable, begin=None, end=None):
-    """
-
-    5   4   {3}  [2]  1
-    5*  4   {3}   1* [2]
-    1   4*  {3}   5  [2]*
-    1  [2]  {3}*  5   4
-
-    :param iterable:
-    :param begin:
-    :param end:
-    :return:
-    """
-    """
-    if begin is None:
-        begin = 0
-    if end is None:
-        end = len(iterable)
-    p = begin + (end - begin) // 2
-    pivot = iterable[p]
-    i = begin
-    while i < end:
-        if i != p:
-            if iterable[i] <
-        i += 1
-    """
-
-#def partition(iterable, begin=None, end=None):
-
-
-#def three_partition(iterable, begin=None, end=None):
-#    pass
-
-
-#if __name__ == '__main__':
-#    print merge_sort([5, 4, 3, 2, 1])
-
 def last_pivot(iterable):
     """
 
@@ -182,27 +145,124 @@ def three_median_pivot(iterable, i=None, j=None, k=None):
     :param k:
     :return:
     """
-    n = len(iterable)
+    if i is None:
+        i = 0
+    if k is None:
+        k = len(iterable)
+    n = k - i
+    if j is None:
+        j = i + n // 2
     if n == 0:
         return None
     if n == 1:
         return 0
-    if i is None:
-        i = 0
-    if j is None:
-        j = n // 2
-    if k is None:
-        k = n-1
-    a = {0: (iterable[i], i),
-         1: (iterable[j], j),
-         2: (iterable[k], k)}
-    if a[0][0] > a[1][0]: swap(iterable, 0, 1)
-    if a[1][0] > a[2][0]: swap(iterable, 1, 2)
-    if a[0][0] > a[1][0]: swap(iterable, 0, 1)
-    return a[1][1]
+    a = [i, j, k-1]
+    if iterable[a[0]] > iterable[a[1]]:
+        swap(a, 0, 1)
+    if iterable[a[1]] > iterable[a[2]]:
+        swap(a, 1, 2)
+    if iterable[a[0]] > iterable[a[1]]:
+        swap(a, 0, 1)
+    return a[1]
 
 
-def ninther_pivot(iterable):
-    n = len(iterable)
+def ninther_pivot(iterable, begin=None, end=None):
+    """
+
+    :param iterable:
+    :param begin:
+    :param end:
+    :return:
+    """
+    if begin is None:
+        begin = 0
+    if end is None:
+        end = len(iterable)
+    n = end - begin
     if n < 9:
-        return three_median_pivot(iterable)
+        return three_median_pivot(iterable, i=begin, j=None, k=end)
+    k1, k2 = begin + n//3, begin + 2*n//3
+    a = [three_median_pivot(iterable, i=begin, j=None, k=k1),
+         three_median_pivot(iterable, i=k1, j=None, k=k2),
+         three_median_pivot(iterable, i=k2)]
+    m = three_median_pivot(map(iterable.__getitem__, a))
+    return a[m]
+
+
+def partition(iterable, begin=None, end=None):
+    """
+
+    :param iterable:
+    :param begin:
+    :param end:
+    :return:
+    """
+    if begin is None:
+        begin = 0
+    if end is None:
+        end = len(iterable)
+    p = ninther_pivot(iterable, begin=begin, end=end)
+    pivot = iterable[p]
+    i = begin
+    while i < end:
+        e = iterable[i]
+        if i < p and e > pivot:
+            swap(iterable, p, i)
+            p = i
+        elif i > p and e <= pivot:
+            if i-p == 1:
+                swap(iterable, i, p)
+                p = i
+            else:
+                swap(iterable, i, p+1)
+                swap(iterable, p, p+1)
+                p += 1
+        i += 1
+    return p
+
+
+def quick_sort(iterable, begin=None, end=None):
+    """
+
+    :param iterable:
+    :param begin:
+    :param end:
+    :return:
+    """
+    if begin is None:
+        begin = 0
+    if end is None:
+        end = len(iterable)
+    n = end - begin
+    if n > 1:
+        p = partition(iterable, begin=begin, end=end)
+        quick_sort(iterable, begin=begin, end=p)
+        quick_sort(iterable, begin=p, end=end)
+    return iterable
+
+
+if __name__ == '__main__':
+    import random, math
+    # n = 10
+    # j = int(n * (2 + math.log10(n)))
+    # for i in range(500):
+    #     l1 = range(n)
+    #     random.shuffle(l1)
+    #     par = partition(l1)
+    #     left = l1[:par]
+    #     right = l1[par+1:]
+    #     print l1, '=>', str(left).ljust(j), '(%s)' % l1[par], str(right)
+
+    n = 20
+    for i in range(500):
+        l1 = [random.randrange(n) for _ in range(n)]
+        random.shuffle(l1)
+        l1_copy = l1[:]
+        res = quick_sort(l1)
+        print l1_copy, '=>', res
+
+    # l1 = [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 29, 22, 26, 25, 28, 24, 27, 30, 23]
+    # begin = 10
+    # end = 31
+    # p = partition(l1, begin=begin, end=end)
+    # print p
