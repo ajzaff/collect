@@ -133,9 +133,10 @@ def single_buy_single_sell_table(iterable, begin=None, end=None):
 
 
 if __name__ == '__main__':
-    l1 = [1, 5, 3, 2, 4, 8, 3, 0, 0, 5]
-    print single_buy_single_sell_naive(l1)
-    print single_buy_single_sell_divide(l1)
-    print single_buy_single_sell_optimal_divide(l1)
-    print single_buy_single_sell_table(l1)
+    pass
+    # l1 = [1, 5, 3, 2, 4, 8, 3, 0, 0, 5]
+    # print single_buy_single_sell_naive(l1)
+    # print single_buy_single_sell_divide(l1)
+    # print single_buy_single_sell_optimal_divide(l1)
+    # print single_buy_single_sell_table(l1)
 
